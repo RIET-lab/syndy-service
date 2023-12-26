@@ -14,7 +14,7 @@ class ContainerStack extends cdk.Stack {
 
     // const repository = new ecr.Repository(this, 'TestModelRepository');
     this.imageAsset = new ecrAssets.DockerImageAsset(this, 'TestModelDockerImage', {
-      directory: 'modeling/', // Directory where your Dockerfile is located
+      directory: 'services/modeling/', // Directory where your Dockerfile is located
     });
     
     // this.repositoryUri = repository.repositoryUri;

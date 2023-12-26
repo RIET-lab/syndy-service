@@ -1,17 +1,16 @@
-# Welcome to your CDK TypeScript project
+# Step 1: Zip up Lambda Code and generate deps:
+Run
+```
+cd services/labeling
+chmod +x setup_zip.sh
+./setup_zip.sh
+```
 
-This is a blank project for CDK development with TypeScript.
-
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
-
-## Useful commands
-
-* `npm run build`   compile typescript to js
-* `npm run watch`   watch for changes and compile
-* `npm run test`    perform the jest unit tests
-* `cdk deploy`      deploy this stack to your default AWS account/region
-* `cdk diff`        compare deployed stack with current state
-* `cdk synth`       emits the synthesized CloudFormation template
-
-
-# Step 1: Setting up service
+# Step 2: Deploy Lambda Code and generate deps:
+Run
+```
+cdk synth --all
+cdk bootstrap
+cdk deploy --all
+```
+Change `--all` to specific stack name if you want to deploy only one stack.

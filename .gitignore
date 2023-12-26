@@ -1,6 +1,11 @@
 *.ipynb
 *.pt
 
+.vscode/
+
+**/packages/
+*.zip
+
 *.js
 !jest.config.js
 *.d.ts
