@@ -1,13 +1,10 @@
 import * as cdk from 'aws-cdk-lib';
 import ContainerStack from '../lib/stacks/container-stack';
-// import SageMakerEndpointStack from '../lib/stacks/sagemakerendpoint-stack';
 import VpcStack from '../lib/stacks/vpc-stack';
 import EcsServiceStack from '../lib/stacks/ecs-service-stack';
 import { PythonLambdaStack } from '../lib/stacks/serverless-api-stack';
-import { CfnAnnotationStore } from 'aws-cdk-lib/aws-omics';
-// import ApiStack from '../lib/stacks/api-stack';
+import { DatasetsStack } from '../lib/stacks/datasets-stack';
 
-// import * as sqs from 'aws-cdk-lib/aws-sqs';
 
 const app = new cdk.App();
 const vpc = new VpcStack(app, 'TestVpcStack');
@@ -20,5 +17,13 @@ const annotate = new PythonLambdaStack(app, 'AnnotationLambda', {
     code: 'services/labeling/deployment.zip',
     handler: 'extract.handle'
 });
+const datapull = new PythonLambdaStack(app, 'DataPullLambda', {
+    vpc: vpc.vpc,
+    code: 'services/data_pulling/deployment.zip',
+    handler: 'data.handle',
+    timeout: 300
+});
 annotate.addDependency(vpc);
+datapull.addDependency(vpc);
+const datasets = new DatasetsStack(app, 'DatasetsStack');
 app.synth();

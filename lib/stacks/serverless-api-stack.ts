@@ -9,6 +9,7 @@ export interface PythonLambdaProps {
   vpc: ec2.Vpc;
   code: string;
   handler: string;
+  timeout?: number;
 }
 
 export class PythonLambdaStack extends cdk.Stack {
@@ -21,7 +22,8 @@ export class PythonLambdaStack extends cdk.Stack {
       code: Code.fromAsset(props.code),
       handler: props.handler,
       runtime: lambda.Runtime.PYTHON_3_8,
-      vpc: props.vpc
+      vpc: props.vpc,
+      timeout: cdk.Duration.seconds(props.timeout || 60),
     });
   }
 }
