@@ -58,7 +58,10 @@ AWS_SECRET_ACCESS_KEY =
 ```
 note this is similar to root dir `.env` with some additions to hardcode the resources + aws credentials
 
+Additionally, since in production the env is setup during resource creation, for local testing use `Dockerfile.test` to build the image and run the container. This will setup the env and run the service for local use.
+
 # Notes
-- Alot of the keys are handled via a `.env` file, which is not ideal for production. I would reccomend migrating them to AWS Secrets Manager
+- Alot of the keys are handled via a `.env` file, I would reccomend migrating them to AWS Secrets Manager
+- A huge performance bottle neck is running inference on a whole dataset during deduplication. Should be parallelized or compute optimized to speed up.
 - The datapulling relies on PRAW which ratelimits with the wind, so finding future solutions will be helpful.
 - SynDy asynchronously starts dataset creation using pythons threading, which is not ideal for production. I would reccomend using a queueing service like SQS or a message broker like RabbitMQ.
