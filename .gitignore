@@ -5,6 +5,7 @@
 
 **/packages/
 *.zip
+.env
 
 *.js
 !jest.config.js

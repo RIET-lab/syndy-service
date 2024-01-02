@@ -40,23 +40,22 @@ class Handler(BaseHandler):
         self.initialized = True
 
     def preprocess(self, data):
-        input_text = data[0].get("data")
-        if input_text is None:
-            input_text = data[0].get("body")
+        input_texts = data[0].get("data")
+        if input_texts is None:
+            input_texts = data[0].get("body")
 
-        if type(input_text) == bytearray:
-            input_text = input_text.decode()
+        if type(input_texts) == bytearray:
+            input_texts = input_texts.decode()
         
-        inputs = self.tokenizer.encode_plus(input_text, max_length=self.MAX_LENGTH, return_tensors='pt')
-        return inputs
+        if len(input_texts) and input_texts[0] == "[": 
+            input_texts = json.loads(input_texts)
+        return input_texts
 
     def postprocess(self, output):
-        return output.get("sentence_embedding").detach().numpy().tolist()
+        return [output.tolist()]
 
     def handle(self, data, context):
         if not data:
             return {"result": "No data received"}
-        with torch.no_grad():
-            model_output = self.model(self.preprocess(data))
-        response = self.postprocess(model_output)
-        return response
+        model_output = self.model.encode(self.preprocess(data))
+        return self.postprocess(model_output)

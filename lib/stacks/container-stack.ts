@@ -5,19 +5,21 @@ import * as ecr from 'aws-cdk-lib/aws-ecr';
 import * as ecrAssets from 'aws-cdk-lib/aws-ecr-assets';
 import { Construct } from 'constructs';
 
+interface ContainerStackProps extends cdk.StackProps {
+  name: string;
+  directory: string;
+};
+
 class ContainerStack extends cdk.Stack {
   public readonly repositoryUri: string;
   public readonly imageAsset: ecrAssets.DockerImageAsset;
   
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props: ContainerStackProps) {
     super(scope, id, props);
 
-    // const repository = new ecr.Repository(this, 'TestModelRepository');
-    this.imageAsset = new ecrAssets.DockerImageAsset(this, 'TestModelDockerImage', {
-      directory: 'services/modeling/', // Directory where your Dockerfile is located
+    this.imageAsset = new ecrAssets.DockerImageAsset(this, props.name, {
+      directory: props.directory,
     });
-    
-    // this.repositoryUri = repository.repositoryUri;
   }
 }
 

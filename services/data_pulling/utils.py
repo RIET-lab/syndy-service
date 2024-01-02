@@ -50,5 +50,15 @@ def submission_dict(submission):
     
     return values
 
+def bodify_submission_object(submission):
+    title = submission.title if hasattr(submission, "title") else None
+    body = submission.selftext if hasattr(submission, "selftext") else None
+    if title and body:
+        return f"Title: {title}\n\nBody: {body}"
+    elif title:
+        return title
+    else:
+        return body
+
 
     
