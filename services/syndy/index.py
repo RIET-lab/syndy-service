@@ -1,4 +1,5 @@
 from flask import Flask, request
+from flask_cors import CORS
 import boto3
 from threading import Thread
 import time
@@ -13,6 +14,7 @@ import dotenv
 dotenv.load_dotenv()
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/test', methods=['GET'])
 def test():
