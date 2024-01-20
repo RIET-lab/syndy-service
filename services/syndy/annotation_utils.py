@@ -4,26 +4,36 @@ import os
 from concurrent.futures import ThreadPoolExecutor
 import asyncio
 import pandas as pd
+import time
 
 from utils import get_hash
 
 def annotate_text(lambda_client, text):
-    text_response = lambda_client.invoke(
-        FunctionName=os.getenv("ANNOTATE_ARN"),
-        InvocationType='RequestResponse',
-        Payload=json.dumps(dict(
-            openai_key=os.getenv("OPENAI_KEY"),
-            text=text
-        ))
-    )
+    MAX_TRIES = 5
+    for try_num in range(MAX_TRIES):
+        try:
+            text_response = lambda_client.invoke(
+                FunctionName=os.getenv("ANNOTATE_ARN"),
+                InvocationType='RequestResponse',
+                Payload=json.dumps(dict(
+                    openai_key=os.getenv("OPENAI_KEY"),
+                    text=text
+                ))
+            )
+            break
+        except lambda_client.exceptions.ResourceNotReadyException:
+            print(f"{try_num}:: Lambda function not ready. Trying again in 2 sec...")
+            time.sleep(2)
+    else:
+        raise Exception("Lambda function not ready after {} tries".format(MAX_TRIES))
     response = json.loads(text_response['Payload'].read())
     response["text"] = text
     return response
 
 def annotate_texts(lambda_client, texts):
     async def annotate_texts_async(texts):
-        cpu_count = os.cpu_count() or 1
-        with ThreadPoolExecutor(max_workers=cpu_count) as executor:
+        max_workers = 50
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
             loop = asyncio.get_event_loop()
             tasks = []
 
